@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposal Review Page for DC</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Proposal Review Page for DC</h1>
+            <nav>
+                <ul>
+                    <li><a href="dashboard-dc.html">Dashboard</a></li>
+                    <li><a href="#">Profile</a></li>
+                    <li><a href="#" id="logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="proposal-details">
+        <div class="container">
+            <h2>Proposal Details</h2>
+            <div class="proposal-info" id="proposalInfo"></div>
+        </div>
+    </section>
+    <section class="proposal-review">
+        <div class="container">
+            <h2>Review and Comments</h2>
+            <form id="reviewForm">
+                <div class="form-group">
+                    <label for="review_comments">Comments:</label>
+                    <textarea id="review_comments" name="review_comments" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="funds">Funds Allocated:</label>
+                    <input type="number" id="funds" name="funds" required>
+                </div>
+                <div class="form-group">
+                    <label for="recommendation">Recommendation:</label>
+                    <select id="recommendation" name="recommendation" required>
+                        <option value="approve">Approve</option>
+                        <option value="reject">Reject</option>
+                        <option value="modify">Modify</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn">Submit Review</button>
+                </div>
+            </form>
+        </div>
+    </section>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+        $(document).ready(function() {
+            var proposalId = sessionStorage.getItem('proposalId');
+            var token = sessionStorage.getItem('token');
+            if (!token) {
+                alert('You are not logged in.');
+                return;
+            }
+
+            function fetchProposalDetails() {
+                $.ajax({
+                    url: `http://localhost:3000/api/proposals/${proposalId}`,
+                    type: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    success: function(proposal) {
+                        $('#proposalInfo').html(`
+                            <p><strong>Head Name:</strong> ${proposal.panchayat.name}</p>
+                            <p><strong>Head Type:</strong> ${proposal.headType}</p>
+                            <p><strong>Request Description:</strong> ${proposal.requestDescription}</p>
+                            <p><strong>Estimated Cost:</strong> ${proposal.estimatedCost}</p>
+                            <p><strong>Panchayat Name:</strong> ${proposal.panchayat.name}</p>
+                            <p><strong>Attachment:</strong> <a href="${proposal.attachment}" target="_blank">Download Attachment</a></p>
+                            <p><strong>BDO Comments:</strong> ${proposal.comments_by_bdo || 'No comments'}</p>
+                            <p><strong>BDO Revised Estimate:</strong> ${proposal.revisedEstimate_by_bdo || 'No revised estimate'}</p>
+                        `);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert('Error fetching proposal details: ' + textStatus + ' ' + jqXHR.status + ' ' + jqXHR.responseText);
+                    }
+                });
+            }
+
+            $('#reviewForm').on('submit', function(e) {
+                e.preventDefault();
+
+                var formData = {
+                    proposalId: proposalId,
+                    comments: $('#review_comments').val(),
+                    funds: $('#funds').val(),
+                    recommendation: $('#recommendation').val()
+                };
+
+                $.ajax({
+                    url: 'http://localhost:3000/api/proposals/dc/review',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        alert(response.message);
+                        window.location.href = 'dashboard-dc.html';
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert('Error submitting review: ' + textStatus + ' ' + jqXHR.status + ' ' + jqXHR.responseText);
+                    }
+                });
+            });
+
+            fetchProposalDetails();
+        });
+    </script>
+    <script src="logout.js"></script>
+</body>
+</html>

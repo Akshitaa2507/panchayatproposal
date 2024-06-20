@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Panchayat</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Manage Panchayat</h1>
+            <nav>
+                <ul>
+                    <li><a href="dashboard-bdo.html">Dashboard</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#" id="logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="manage-panchayat">
+        <div class="container">
+            <h2>Add Panchayat</h2>
+            <form id="addPanchayatForm">
+                <div>
+                    <label for="userID">UserID:</label>
+                    <input type="text" id="userID" name="userID" required>
+                </div>
+                <div>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="phone">Phone:</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <P></P>
+                <button type="submit" class="btn">Add Panchayat</button>
+            </form>
+
+            <h2>Modify Panchayat</h2>
+            <form id="modifyPanchayatForm">
+                <div>
+                    <label for="modifyUserID">UserID:</label>
+                    <input type="text" id="modifyUserID" name="userID" required>
+                </div>
+                <div>
+                    <label for="modifyName">New Name:</label>
+                    <input type="text" id="modifyName" name="name">
+                </div>
+                <div>
+                    <label for="modifyEmail">New Email:</label>
+                    <input type="email" id="modifyEmail" name="email">
+                </div>
+                <div>
+                    <label for="modifyPhone">New Phone:</label>
+                    <input type="tel" id="modifyPhone" name="phone">
+                </div>
+                <P></P>
+                <button type="submit" class="btn">Modify Panchayat</button>
+            </form>
+
+            <h2>Remove Panchayat</h2>
+            <form id="removePanchayatForm">
+                <div>
+                    <label for="removeUserID">UserID:</label>
+                    <input type="text" id="removeUserID" name="userID" required>
+                </div>
+                <P></P>
+                <button type="submit" class="btn">Remove Panchayat</button>
+            </form>
+        </div>
+    </section>
+    
+    <script>
+        $(document).ready(function() {
+            const token = sessionStorage.getItem('token');
+
+            if (!token) {
+                alert('You are not logged in.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            $('#addPanchayatForm').on('submit', function(event) {
+                event.preventDefault();
+
+                const formData = {
+                    userID: $('#userID').val(),
+                    name: $('#name').val(),
+                    email: $('#email').val(),
+                    phone: $('#phone').val(),
+                };
+
+                $.ajax({
+                    url: 'http://localhost:3000/api/bdo/add-panchayat',
+                    type: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        alert('Panchayat added successfully!');
+                        window.location.href = 'dashboard-bdo.html';
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error adding Panchayat:', textStatus, errorThrown);
+                        alert('Error adding Panchayat: ' + textStatus);
+                    }
+                });
+            });
+
+            $('#modifyPanchayatForm').on('submit', function(event) {
+                event.preventDefault();
+
+                const formData = {
+                    userID: $('#modifyUserID').val(),
+                    name: $('#modifyName').val(),
+                    email: $('#modifyEmail').val(),
+                    phone: $('#modifyPhone').val(),
+                };
+
+                $.ajax({
+                    url: 'http://localhost:3000/api/bdo/modify-panchayat',
+                    type: 'PUT',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        alert('Panchayat modified successfully!');
+                        window.location.href = 'dashboard-bdo.html';
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error modifying Panchayat:', textStatus, errorThrown);
+                        alert('Error modifying Panchayat: ' + textStatus);
+                    }
+                });
+            });
+
+            $('#removePanchayatForm').on('submit', function(event) {
+                event.preventDefault();
+
+                const formData = {
+                    userID: $('#removeUserID').val()
+                };
+
+                $.ajax({
+                    url: 'http://localhost:3000/api/bdo/remove-panchayat',
+                    type: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        alert('Panchayat removed successfully!');
+                        window.location.href = 'dashboard-bdo.html';
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error removing Panchayat:', textStatus, errorThrown);
+                        alert('Error removing Panchayat: ' + textStatus);
+                    }
+                });
+            });
+        });
+    </script>
+    <script src="logout.js"></script>
+</body>
+</html>
+

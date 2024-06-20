@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDO Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Reset some basic styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Main layout using flexbox */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            flex: 1; /* Allow the container to grow and take available space */
+        }
+
+        header {
+            background: #333;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #77d4d4 3px solid;
+        }
+
+        header a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+
+        header ul {
+            padding: 0;
+            list-style: none;
+        }
+
+        header li {
+            display: inline;
+            padding: 0 20px;
+        }
+
+        .dashboard {
+            padding: 20px;
+            padding-bottom: 100px; /* Add bottom padding to avoid footer overlap */
+        }
+
+        .dashboard h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .btn {
+            background-color: #77d4d4;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #55a3a3;
+        }
+
+        .proposal-details div {
+            margin-bottom: 10px;
+        }
+
+        /* Footer stays at the bottom */
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            width: 100%;
+            flex-shrink: 0; /* Prevent footer from shrinking */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>BDO Dashboard</h1>
+            <nav>
+                <ul>
+                    <li><a href="dashboard-bdo.html">Dashboard</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#" id="logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="dashboard">
+        <div class="container">
+            <button onclick="window.location.href='addpanchayat.html'" class="btn">MODIFY PANCHAYAT'S UNDER YOU</button>
+            <BR>
+                <BR>
+            <h2>Proposals for Review</h2>
+            <table id="proposalsTable">
+                <thead>
+                    <tr>
+                        <th>Proposal Details</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <h2>Reviewed Proposals</h2>
+            <table id="reviewedProposalsTable">
+                <thead>
+                    <tr>
+                        <th>Proposal Details</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script> 
+        $(document).ready(function() {
+            var token = sessionStorage.getItem('token');
+    
+            if (!token) {
+                alert('You are not logged in.');
+                window.location.href = 'index.html';
+                return;
+            }
+    
+            // Fetch proposals for review
+            $.ajax({
+                url: 'http://localhost:3000/api/proposals/bdo?status=submitted',
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                },
+                success: function(proposals) {
+                    var tableBody = $('#proposalsTable tbody');
+                    tableBody.empty();
+    
+                    proposals.forEach(function(proposal) {
+                        var row = $('<tr></tr>');
+                        var detailsCell = $('<td class="proposal-details"></td>');
+                        detailsCell.append('<div><strong>Head Type:</strong> ' + proposal.headType + '</div>');
+                        detailsCell.append('<div><strong>Description:</strong> ' + proposal.requestDescription + '</div>');
+                        detailsCell.append('<div><strong>Estimated Cost:</strong> ' + proposal.estimatedCost + '</div>');
+                        detailsCell.append('<div><strong>Panch Name:</strong> ' + proposal.panchayat.name + '</div>');
+                        detailsCell.append('<div><a href="' + proposal.attachment + '" target="_blank">View Attachment</a></div>');
+                        row.append(detailsCell);
+                        
+                        var actionCell = $('<td></td>');
+                        actionCell.append('<button class="btn review-btn" data-id="' + proposal._id + '">Review</button>');
+                        row.append(actionCell);
+    
+                        tableBody.append(row);
+                    });
+    
+                    $('.review-btn').on('click', function() {
+                        var proposalId = $(this).data('id');
+                        sessionStorage.setItem('proposalId', proposalId);
+                        window.location.href = 'review-proposal.html';
+                    });
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log('jqXHR:', jqXHR);
+                    console.log('textStatus:', textStatus);
+                    console.log('errorThrown:', errorThrown);
+                    alert('Error fetching proposals: ' + textStatus);
+                }
+            });
+    
+            // Fetch reviewed proposals
+           
+            // Fetch reviewed proposals
+$.ajax({
+    url: 'http://localhost:3000/api/proposals/bdo?status=reviewed_by_bdo',
+    type: 'GET',
+    headers: {
+        'Authorization': 'Bearer ' + token
+    },
+    success: function(proposals) {
+        var tableBody = $('#reviewedProposalsTable tbody');
+        tableBody.empty();
+
+        proposals.forEach(function(proposal) {
+            var row = $('<tr></tr>');
+            var detailsCell = $('<td class="proposal-details"></td>');
+            detailsCell.append('<div><strong>Head Type:</strong> ' + proposal.headType + '</div>');
+            detailsCell.append('<div><strong>Description:</strong> ' + proposal.requestDescription + '</div>');
+            detailsCell.append('<div><strong>Estimated Cost:</strong> ' + proposal.estimatedCost + '</div>');
+            detailsCell.append('<div><strong>Panchayat Name:</strong> ' + proposal.panchayat.name + '</div>');
+            detailsCell.append('<div><a href="' + proposal.attachment + '" target="_blank">View Attachment</a></div>');
+            row.append(detailsCell);
+            
+            var actionCell = $('<td></td>');
+            // Display updated comments and cost instead of a button
+            actionCell.append('<div><strong>Updated Comments:</strong> ' + proposal.comments_by_bdo + '</div>');
+            actionCell.append('<div><strong>Revised Cost:</strong> ' + proposal.revisedEstimate_by_bdo + '</div>');
+            row.append(actionCell);
+
+            tableBody.append(row);
+        });
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+        console.log('jqXHR:', jqXHR);
+        console.log('textStatus:', textStatus);
+        console.log('errorThrown:', errorThrown);
+        alert('Error fetching reviewed proposals: ' + textStatus);
+    }
+});
+
+        });
+    </script>
+   <script src="logout.js"></script>
+</body>
+</html>
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDO Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #77d4d4 3px solid;
+        }
+        header a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+        header ul {
+            padding: 0;
+            list-style: none;
+        }
+        header li {
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+        .dashboard {
+            padding: 20px;
+        }
+        .dashboard h2 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .btn {
+            background-color: #77d4d4;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #55a3a3;
+        }
+        .proposal-details div {
+            margin-bottom: 10px;
+        }
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>BDO Dashboard</h1>
+            <nav>
+                <ul>
+                    <li><a href="dashboard-bdo.html">Dashboard</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="dashboard">
+        <div class="container">
+            <h2>Proposals for Review</h2>
+            <table id="proposalsTable">
+                <thead>
+                    <tr>
+                        <th>Proposal Details</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        $(document).ready(function() {
+            var token = sessionStorage.getItem('token');
+
+            if (!token) {
+                alert('You are not logged in.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            $.ajax({
+                url: 'http://localhost:3000/api/proposals/bdo',
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                },
+                success: function(proposals) {
+                    var tableBody = $('#proposalsTable tbody');
+                    tableBody.empty();
+
+                    proposals.forEach(function(proposal) {
+                        var row = $('<tr></tr>');
+                        var detailsCell = $('<td class="proposal-details"></td>');
+                        detailsCell.append('<div><strong>Head Type:</strong> ' + proposal.headType + '</div>');
+                        detailsCell.append('<div><strong>Description:</strong> ' + proposal.requestDescription + '</div>');
+                        detailsCell.append('<div><strong>Estimated Cost:</strong> ' + proposal.estimatedCost + '</div>');
+                        detailsCell.append('<div><strong>Panchayat Name:</strong> ' + proposal.panchayat.name + '</div>');
+                        detailsCell.append('<div><a href="' + proposal.attachment + '" target="_blank">View Attachment</a></div>');
+                        row.append(detailsCell);
+                        
+                        var actionCell = $('<td></td>');
+                        actionCell.append('<button class="btn review-btn" data-id="' + proposal._id + '">Review</button>');
+                        row.append(actionCell);
+
+                        tableBody.append(row);
+                    });
+
+                    $('.review-btn').on('click', function() {
+                        var proposalId = $(this).data('id');
+                        sessionStorage.setItem('proposalId', proposalId);
+                        window.location.href = 'review-proposal.html';
+                    });
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log('jqXHR:', jqXHR);
+                    console.log('textStatus:', textStatus);
+                    console.log('errorThrown:', errorThrown);
+                    alert('Error fetching proposals: ' + textStatus);
+                }
+            });
+        });
+    </script>
+</body>
+</html> -->

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        #dashboardButton {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #dashboardButton:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Create User</h1>
+            <nav>
+                <button id="dashboardButton" class="dashboard-btn" onclick="goToDashboard()">Dashboard</button>
+            </nav>
+        </div>
+    </header>
+    <section class="create-user">
+        <div class="container">
+            <form id="createUserForm">
+                <label for="userID">User ID:</label>
+                <input type="text" id="userID" name="userID" required>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="phone">Phone:</label>
+                <input type="text" id="phone" name="phone" required>
+                <label for="role">Role:</label>
+                <select id="role" name="role" required>
+                    <option value="panchayat">Panchayat</option>
+                    <option value="bdo">BDO</option>
+                    <option value="dc">DC</option>
+                </select>
+                <div id="hierarchyFields">
+                    <label for="bdoID">BDO ID (for Panchayat):</label>
+                    <input type="text" id="bdoID" name="bdoID">
+                    <label for="dcDistrictID">DC/District ID (for Panchayat and BDO):</label>
+                    <input type="text" id="dcDistrictID" name="dcDistrictID">
+                </div>
+                <br>
+                <button type="submit">Create User</button>
+            </form>
+        </div>
+    </section>
+    <script>
+        document.getElementById('createUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userID = document.getElementById('userID').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const role = document.getElementById('role').value;
+            const bdo = document.getElementById('bdoID').value;
+            const dcDistrict = document.getElementById('dcDistrictID').value;
+    
+            // Retrieve the JWT token from sessionStorage
+            const token = sessionStorage.getItem('jwtToken');
+            if (!token) {
+                alert('You are not logged in');
+                window.location.href = 'index.html';
+                return;
+            }
+    
+            try {
+                const response = await fetch('http://localhost:3000/admin/create_user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // Use the stored token
+                    },
+                    body: JSON.stringify({ userID, name, email, phone, role, bdo, dcDistrict })
+                });
+    
+                const data = await response.json();
+                if (response.ok) {
+                    alert('User created successfully');
+                } else {
+                    alert(data.message);
+                    if (response.status === 401) {
+                        window.location.href = 'login.html';
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+    
+        function goToDashboard() {
+            window.location.href = 'admin_dashboard.html'; // Change this to your actual dashboard URL
+        }
+    </script>
+    
+</body>
+</html>

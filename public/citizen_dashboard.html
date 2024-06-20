@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em 0;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        header nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        header nav ul li {
+            margin-left: 20px;
+        }
+
+        header nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+
+        .dashboard .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+            text-align: center;
+        }
+
+        button {
+            background-color: #4478b0;
+            color: #fff;
+            border: none;
+            width: 200px; /* Increased width to make the button larger */
+            height: 200px; /* Increased height to make the button larger */
+            font-size: 1.2em;
+            margin: 20px; /* Increased margin for better spacing */
+            border-radius: 10px; /* Slightly larger border radius */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Added shadow for better visuals */
+        }
+
+        button:hover {
+            background-color: #0f263f;
+            transform: scale(1.05); /* Slightly enlarge button on hover */
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1em 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Citizen Dashboard</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="#" id="logout">Logout</a></li>
+
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="dashboard">
+        <div class="container">
+            <button id="sendProposalBtn">Send/View Proposals to Panchayat</button>
+            <button id="viewApprovedProposalsBtn">View All Proposals made by your Panchayat</button>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+        document.getElementById('sendProposalBtn').addEventListener('click', () => {
+            window.location.href = 'proposal.html'; // Page to send a proposal
+        });
+
+        document.getElementById('viewApprovedProposalsBtn').addEventListener('click', async () => {
+            window.location.href = 'approvedProposals.html'; // Page to view approved proposals
+        });
+    </script>
+    <script src="logout.js"></script>
+</body>
+</html>

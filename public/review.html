@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Proposal</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .review-form {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+        }
+
+        .review-form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .review-form input,
+        .review-form textarea,
+        .review-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .review-form button {
+            background-color: #1b3d61;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .review-form button:hover {
+            background-color: #093360;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Review Proposal</h1>
+        <div class="review-form" id="reviewForm">
+            <label for="pcomments">Comments:</label>
+            <textarea id="pcomments" rows="4"></textarea>
+            <label for="pattachment">Attachment:</label>
+            <input type="file" id="pattachment">
+            <label for="cstatus">Status:</label>
+            <select id="cstatus">
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+            <button onclick="submitReview()">Submit Review</button>
+            <button onclick="cancelReview()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const proposalId = params.get('proposalId');
+
+            if (!proposalId) {
+                alert('Proposal ID not found');
+                window.close();
+                return;
+            }
+
+            document.getElementById('reviewForm').dataset.proposalId = proposalId;
+        });
+
+        function cancelReview() {
+            window.close();
+        }
+
+        async function submitReview() {
+            const proposalId = document.getElementById('reviewForm').dataset.proposalId;
+            const pcomments = document.getElementById('pcomments').value;
+            const pattachment = document.getElementById('pattachment').files[0];
+            const cstatus = document.getElementById('cstatus').value;
+
+            if (!pcomments || !cstatus) {
+                alert('All fields are required.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('pcomments', pcomments);
+            formData.append('cstatus', cstatus);
+            if (pattachment) {
+                formData.append('pattachment', pattachment);
+            }
+
+            try {
+                const token = sessionStorage.getItem('token'); // Retrieve token
+                if (!token) {
+                    throw new Error('Token not found');
+                }
+
+                const response = await fetch(`/api/panchayat/updateProposal/${proposalId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update proposal status');
+                }
+
+                alert(`Proposal updated successfully to ${cstatus}`);
+                window.close();
+            } catch (error) {
+                console.error('Error updating proposal:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>
+

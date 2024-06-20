@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Submitted Proposals</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>View Proposals</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#" id="logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="view-proposals">
+        <div class="container">
+            <h2>All Proposals</h2>
+            <ul id="proposalsList"></ul>
+        </div>
+    </section>
+    <section class="proposal-details">
+        <div class="container">
+            <h2>Proposal Details</h2>
+            <div id="proposalDetails"></div>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+        document.getElementById('logout').addEventListener('click', function(event) {
+            event.preventDefault();
+            fetch('/logout', {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Logout failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProposals();
+        });
+
+        function loadProposals() {
+            fetch('/api/proposals', {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                }
+            })
+            .then(response => response.json())
+            .then(proposals => {
+                const proposalsList = document.getElementById('proposalsList');
+                proposalsList.innerHTML = '';
+                proposals.filter(proposal => proposal.headType).forEach((proposal, index)=> {
+                    const listItem = document.createElement('li');
+                    const proposalLink = document.createElement('a');
+                    proposalLink.href = `#${proposal._id}`;
+                    proposalLink.textContent = `Proposal`;
+                    proposalLink.dataset.proposalId = proposal._id;
+                    proposalLink.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        fetchProposalDetails(proposal._id);
+                    });
+                    const statusSpan = document.createElement('span');
+                    statusSpan.textContent = ` - Status: ${proposal.status}`;
+                    listItem.appendChild(proposalLink);
+                    listItem.appendChild(statusSpan);
+                    proposalsList.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function fetchProposalDetails(proposalId) {
+            fetch(`/api/proposals/${proposalId}`, {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                }
+            })
+            .then(response => response.json())
+            .then(proposal => {
+                if (proposal) {
+                    displayProposalDetails(proposal);
+                } else {
+                    console.error('Proposal not found');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching proposal details:', error);
+            });
+        }
+
+        function displayProposalDetails(proposal) {
+            const proposalDetails = document.getElementById('proposalDetails');
+            proposalDetails.innerHTML = `
+                <p><strong>Head Type:</strong> ${proposal.headType}</p>
+                <p><strong>Request Description:</strong> ${proposal.requestDescription}</p>
+                <p><strong>Attachment:</strong> <a href="${proposal.attachment}" target="_blank">View Attachment</a></p>
+                <p><strong>Estimated Cost:</strong> ${proposal.estimatedCost}</p>
+                <p><strong>Panchayat Name:</strong> ${proposal.panchayat ? proposal.panchayat.name : 'N/A'}</p>
+                <p><strong>B.D.O.:</strong> ${proposal.bdo ? proposal.bdo.name : 'N/A'}</p>
+               
+                <p><strong>Status:</strong> ${proposal.status}</p>
+                <p><strong>Comments:</strong> ${proposal.comments || 'No comments'}</p>
+                <p><strong>Comments by BDO:</strong> ${proposal.comments_by_bdo || 'No comments by BDO'}</p>
+                <p><strong>Comments by DC:</strong> ${proposal.comments_by_dc || 'No comments by DC'}</p>
+                <p><strong>Revised Estimate by BDO:</strong> ${proposal.revisedEstimate_by_bdo || 'No revised estimate by BDO'}</p>
+                <p><strong>Funds:</strong> ${proposal.funds || 'No funds allocated'}</p>
+                <p><strong>Created At:</strong> ${new Date(proposal.createdAt).toLocaleString()}</p>
+            `;
+        }
+    </script>
+     <script src="logout.js"></script>
+</body>
+</html>
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Submitted Proposals</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>View Proposals</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#" id="logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="view-proposals">
+        <div class="container">
+            <h2>All Proposals</h2>
+            <ul id="proposalsList"></ul>
+        </div>
+    </section>
+    <section class="proposal-details">
+        <div class="container">
+            <h2>Proposal Details</h2>
+            <div id="proposalDetails"></div>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+        document.getElementById('logout').addEventListener('click', function(event) {
+            event.preventDefault();
+            fetch('/logout', {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Logout failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProposals();
+        });
+
+        function loadProposals() {
+            fetch('/api/proposals', { // Removed the status filter to get all proposals
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                }
+            })
+            .then(response => response.json())
+            .then(proposals => {
+                const proposalsList = document.getElementById('proposalsList');
+                proposalsList.innerHTML = '';
+                proposals.forEach((proposal, index) => {
+                    const listItem = document.createElement('li');
+                    const proposalLink = document.createElement('a');
+                    proposalLink.href = `#${proposal._id}`;
+                    proposalLink.textContent = `Proposal ${index + 1}`;
+                    proposalLink.dataset.proposalId = proposal._id;
+                    proposalLink.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        fetchProposalDetails(proposal._id);
+                    });
+                    const statusSpan = document.createElement('span');
+                    statusSpan.textContent = ` - Status: ${proposal.status}`;
+                    listItem.appendChild(proposalLink);
+                    listItem.appendChild(statusSpan);
+                    proposalsList.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function fetchProposalDetails(proposalId) {
+            fetch(`/api/proposals/${proposalId}`, {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                }
+            })
+            .then(response => response.json())
+            .then(proposal => {
+                if (proposal) {
+                    displayProposalDetails(proposal);
+                } else {
+                    console.error('Proposal not found');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching proposal details:', error);
+            });
+        }
+
+        function displayProposalDetails(proposal) {
+            const proposalDetails = document.getElementById('proposalDetails');
+            proposalDetails.innerHTML = `
+                <p><strong>Head Type:</strong> ${proposal.headType}</p>
+                <p><strong>Request Description:</strong> ${proposal.requestDescription}</p>
+                <p><strong>Attachment:</strong> <a href="${proposal.attachment}" target="_blank">View Attachment</a></p>
+                <p><strong>Estimated Cost:</strong> ${proposal.estimatedCost}</p>
+                <p><strong>Panchayat:</strong> ${proposal.panchayat ? proposal.panchayat.name : 'N/A'}</p>
+                <p><strong>Block:</strong> ${proposal.panchayat && proposal.panchayat.bdo ? proposal.panchayat.bdo.name : 'N/A'}</p>
+                <p><strong>Dc:</strong> ${proposal.panchayat && proposal.panchayat.district ? proposal.panchayat.district.name : 'N/A'}</p>
+                <p><strong>Status:</strong> ${proposal.status}</p>
+                <p><strong>Comments:</strong> ${proposal.comments || 'No comments'}</p>
+                <p><strong>Funds:</strong> ${proposal.funds || 'No funds allocated'}</p>
+                <p><strong>Created At:</strong> ${new Date(proposal.createdAt).toLocaleString()}</p>
+            `;
+        }
+    </script>
+</body>
+</html> -->

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panchayat View Requests</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1b3d61;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Panchayat View Requests</h1>
+
+        <h2>Pending Proposals</h2>
+        <table id="pendingProposalTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Attachment</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="pendingProposalTableBody">
+                <!-- Pending proposal rows will be inserted here -->
+            </tbody>
+        </table>
+
+        <h2>Approved/Rejected Proposals</h2>
+        <table id="processedProposalTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Attachment</th>
+                    <th>Status</th>
+                    <th>Panchayat Comments</th>
+                    <th>Panchayat Attachment</th>
+                </tr>
+            </thead>
+            <tbody id="processedProposalTableBody">
+                <!-- Processed proposal rows will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const token = sessionStorage.getItem('token'); // Retrieve token
+                if (!token) {
+                    throw new Error('Token not found');
+                }
+
+                const response = await fetch('/api/panchayat/proposals', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch proposals: ${response.statusText}`);
+                }
+
+                const proposals = await response.json();
+                displayProposals(proposals);
+            } catch (error) {
+                console.error('Error fetching proposals:', error);
+                alert(`An error occurred while fetching proposals: ${error.message}`);
+            }
+        });
+
+        function displayProposals(proposals) {
+            const pendingProposalTableBody = document.getElementById('pendingProposalTableBody');
+            const processedProposalTableBody = document.getElementById('processedProposalTableBody');
+            pendingProposalTableBody.innerHTML = '';
+            processedProposalTableBody.innerHTML = '';
+
+            proposals.forEach(proposal => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${proposal.citizen?.name || 'N/A'}</td>
+                    <td>${proposal.citizen?.address || 'N/A'}</td>
+                    <td>${proposal.citizen?.phone || 'N/A'}</td>
+                    <td>${proposal.citizen?.email || 'N/A'}</td>
+                    <td>${proposal.ctitle || 'N/A'}</td>
+                    <td>${proposal.cdescription || 'N/A'}</td>
+                    <td>${proposal.cattachment ? `<a href="${proposal.cattachment}" target="_blank">View Attachment</a>` : 'N/A'}</td>
+                    <td>${proposal.cstatus || 'N/A'}</td>
+                    <td>
+                        ${proposal.cstatus === 'Pending' ? `<button onclick="openReviewForm('${proposal._id}')">Review</button>` : ''}
+                    </td>
+                `;
+
+                if (proposal.cstatus === 'Pending') {
+                    pendingProposalTableBody.appendChild(row);
+                } else {
+                    const processedRow = document.createElement('tr');
+                    processedRow.innerHTML = `
+                        <td>${proposal.citizen?.name || 'N/A'}</td>
+                        <td>${proposal.citizen?.address || 'N/A'}</td>
+                        <td>${proposal.citizen?.phone || 'N/A'}</td>
+                        <td>${proposal.citizen?.email || 'N/A'}</td>
+                        <td>${proposal.ctitle || 'N/A'}</td>
+                        <td>${proposal.cdescription || 'N/A'}</td>
+                        <td>${proposal.cattachment ? `<a href="${proposal.cattachment}" target="_blank">View Attachment</a>` : 'N/A'}</td>
+                        <td>${proposal.cstatus || 'N/A'}</td>
+                        <td>${proposal.pcomments || 'N/A'}</td>
+                        <td>${proposal.pattachment ? `<a href="${proposal.pattachment}" target="_blank">View Attachment</a>` : 'N/A'}</td>
+                    `;
+                    processedProposalTableBody.appendChild(processedRow);
+                }
+            });
+        }
+
+        function openReviewForm(proposalId) {
+            window.open(`review.html?proposalId=${proposalId}`, '_blank', 'width=600,height=400');
+        }
+    </script>
+</body>
+</html>
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panchayat View Requests</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1b3d61;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Panchayat View Requests</h1>
+
+        <h2>Pending Proposals</h2>
+        <table id="pendingProposalTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Attachment</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="pendingProposalTableBody">
+                <!-- Pending proposal rows will be inserted here -->
+            <!-- </tbody>
+        </table>
+
+        <h2>Approved/Rejected Proposals</h2>
+        <table id="processedProposalTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Attachment</th>
+                    <th>Status</th>
+                    <th>Panchayat Comments</th>
+                    <th>Panchayat Attachment</th>
+                </tr>
+            </thead>
+            <tbody id="processedProposalTableBody">
+                <!-- Processed proposal rows will be inserted here -->
+            <!-- </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const token = sessionStorage.getItem('token'); // Retrieve token
+                if (!token) {
+                    throw new Error('Token not found');
+                }
+
+                const response = await fetch('/api/panchayat/proposals', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch proposals: ${response.statusText}`);
+                }
+
+                const proposals = await response.json();
+                displayProposals(proposals);
+            } catch (error) {
+                console.error('Error fetching proposals:', error);
+                alert(`An error occurred while fetching proposals: ${error.message}`);
+            }
+        });
+
+        function displayProposals(proposals) {
+            const pendingProposalTableBody = document.getElementById('pendingProposalTableBody');
+            const processedProposalTableBody = document.getElementById('processedProposalTableBody');
+            pendingProposalTableBody.innerHTML = '';
+            processedProposalTableBody.innerHTML = '';
+
+            proposals.forEach(proposal => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${proposal.citizen.name}</td>
+                    <td>${proposal.citizen.address}</td>
+                    <td>${proposal.citizen.phone}</td>
+                    <td>${proposal.citizen.email}</td>
+                    <td>${proposal.ctitle}</td>
+                    <td>${proposal.cdescription}</td>
+                    <td><a href="${proposal.cattachment}" target="_blank">View Attachment</a></td>
+                    <td>${proposal.cstatus}</td>
+                    <td>
+                        ${proposal.cstatus === 'Pending' ? `<button onclick="openReviewForm('${proposal._id}')">Review</button>` : ''}
+                    </td>
+                `;
+
+                if (proposal.cstatus === 'Pending') {
+                    pendingProposalTableBody.appendChild(row);
+                } else {
+                    const processedRow = document.createElement('tr');
+                    processedRow.innerHTML = `
+                        <td>${proposal.citizen.name}</td>
+                        <td>${proposal.citizen.address}</td>
+                        <td>${proposal.citizen.phone}</td>
+                        <td>${proposal.citizen.email}</td>
+                        <td>${proposal.ctitle}</td>
+                        <td>${proposal.cdescription}</td>
+                        <td><a href="${proposal.cattachment}" target="_blank">View Attachment</a></td>
+                        <td>${proposal.cstatus}</td>
+                        <td>${proposal.pcomments || 'N/A'}</td>
+                        <td>${proposal.pattachment ? `<a href="${proposal.pattachment}" target="_blank">View Attachment</a>` : 'N/A'}</td>
+                    `;
+                    processedProposalTableBody.appendChild(processedRow);
+                }
+            });
+        }
+
+        function openReviewForm(proposalId) {
+            window.open(`review.html?proposalId=${proposalId}`, '_blank', 'width=600,height=400');
+        }
+    </script>
+</body>
+</html> --> --> -->

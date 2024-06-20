@@ -1,0 +1,405 @@
+/* Ensure the body takes up at least 100vh and is a flex container */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure the body is at least the height of the viewport */
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+}
+
+/* Header and Navigation */
+header {
+    background: #35424a;
+    color: #ffffff;
+    padding-top: 30px;
+    min-height: 70px;
+    border-bottom: #e8491d 3px solid;
+}
+
+header a {
+    color: #ffffff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 16px;
+}
+
+header ul {
+    padding: 0;
+    list-style: none;
+}
+
+header ul li {
+    display: inline;
+    padding: 0 20px 0 20px;
+}
+
+header h1 {
+    float: left;
+}
+
+header nav {
+    float: right;
+    margin-top: 10px;
+}
+
+/* Hero Section */
+.hero {
+    background: #e8491d;
+    color: #ffffff;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.hero h2 {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+.hero .btn {
+    padding: 10px 20px;
+    background: #35424a;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 5px;
+}
+
+.hero .btn:hover {
+    background: #333;
+}
+
+/* Login Options Section */
+.login-options {
+    padding: 40px 0;
+    text-align: center;
+}
+
+.login-options .roles {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.login-options .role {
+    background: #ffffff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-options .role h3 {
+    margin-bottom: 20px;
+}
+
+.login-options .role .btn {
+    padding: 10px 20px;
+    background: #e8491d;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.login-options .role .btn:hover {
+    background: #333;
+}
+
+/* Footer Section */
+footer {
+    background: #35424a;
+    color: #ffffff;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: auto; /* Push the footer to the bottom of the page */
+}
+
+/* Form Styles */
+.submission-form {
+    padding: 40px 0;
+}
+
+.submission-form .container {
+    max-width: 600px;
+    margin: auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+input[type="file"] {
+    width: calc(100% - 100px); /* Adjust width to accommodate file input button */
+}
+
+button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #e8491d;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #c73a1b;
+}
+
+/* Specific Section Margins */
+.proposal-review {
+    margin-bottom: 100px; /* Adjust this value to ensure space for the footer */
+}
+
+.approval-detail {
+    margin-bottom: 100px;
+}
+
+.about {
+    margin-bottom: 100px;
+}
+
+.contact {
+    margin-bottom: 100px;
+}
+
+
+/* body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+}
+
+header {
+    background: #35424a;
+    color: #ffffff;
+    padding-top: 30px;
+    min-height: 70px;
+    border-bottom: #e8491d 3px solid;
+}
+
+header a {
+    color: #ffffff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 16px;
+}
+
+header ul {
+    padding: 0;
+    list-style: none;
+}
+
+header ul li {
+    display: inline;
+    padding: 0 20px 0 20px;
+}
+
+header h1 {
+    float: left;
+}
+
+header nav {
+    float: right;
+    margin-top: 10px;
+}
+
+.hero {
+    background: #e8491d;
+    color: #ffffff;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.hero h2 {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+.hero .btn {
+    padding: 10px 20px;
+    background: #35424a;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 5px;
+}
+
+.hero .btn:hover {
+    background: #333;
+}
+
+.login-options {
+    padding: 40px 0;
+    text-align: center;
+}
+
+.login-options .roles {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.login-options .role {
+    background: #ffffff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-options .role h3 {
+    margin-bottom: 20px;
+}
+
+.login-options .role .btn {
+    padding: 10px 20px;
+    background: #e8491d;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.login-options .role .btn:hover {
+    background: #333;
+}
+
+footer {
+    background: #35424a;
+    color: #ffffff;
+    text-align: center;
+    padding: 20px 0;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+
+
+/* Form styles */
+.submission-form {
+    padding: 40px 0;
+}
+
+.submission-form .container {
+    max-width: 600px;
+    margin: auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+input[type="file"] {
+    width: calc(100% - 100px); /* Adjust width to accommodate file input button */
+}
+
+button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #e8491d;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #c73a1b;
+}
+
+
+/* Add this CSS code to your existing styles.css file */
+/* Add this CSS code to your existing styles.css file */
+body {
+    position: relative;
+    min-height: 100vh;
+}
+
+.submission-form {
+    padding-bottom: 100px; /* Adjust this value to ensure space for the footer */
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.proposal-review{
+        margin-bottom: 100px; /* Adjust this value to ensure space for the footer */
+    
+}
+.approval-detail{
+    margin-bottom: 100px;
+}
+.about{
+    margin-bottom: 100px;
+}
+.contact{
+    margin-bottom: 100px;
+} 

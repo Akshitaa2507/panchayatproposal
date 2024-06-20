@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>User Profile</h1>
+        </div>
+    </header>
+    <section class="user-details">
+        <div class="container">
+            <h2>User Information</h2>
+            <div id="profileInfo"></div>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const token = sessionStorage.getItem('token');
+
+                if (!token) {
+                    alert('Please log in first.');
+                    window.location.href = 'loginpage.html';
+                    return;
+                }
+
+                const response = await fetch('http://localhost:3000/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const profileInfoElement = document.getElementById('profileInfo');
+                    
+                    let profileHTML = `
+                        <p>Name: ${data.name}</p>
+                        <p>Email: ${data.email}</p>
+                        <p>Phone: ${data.phone}</p>
+                        <p>Role: ${data.role}</p>
+                    `;
+
+                    if (data.role === 'panchayat') {
+                        profileHTML += `
+                            <p>DC: ${data.district}</p>
+                            <p>BDO: ${data.bdo}</p>
+                        `;
+                    } else if (data.role === 'bdo') {
+                        profileHTML += `<p>DC: ${data.district}</p>`;
+                    } else if (data.role === 'dc') {
+                        profileHTML += `<p>DC: ${data.district}</p>`;
+                    }
+
+                    profileInfoElement.innerHTML = profileHTML;
+                } else if (response.status === 401) {
+                    alert('Unauthorized access. Please log in again.');
+                    window.location.href = 'loginform.html';
+                } else {
+                    alert('Failed to retrieve user profile.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while fetching the profile.');
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+<!-- 
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>User Profile</h1>
+        </div>
+    </header>
+    <section class="user-details">
+        <div class="container">
+            <h2>User Information</h2>
+            <div id="profileInfo"></div>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const token = sessionStorage.getItem('token');
+
+                if (!token) {
+                    alert('Please log in first.');
+                    window.location.href = 'loginpage.html';
+                    return;
+                }
+
+                const response = await fetch('http://localhost:3000/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const profileInfoElement = document.getElementById('profileInfo');
+                    
+                    let profileHTML = `
+                        <p>Name: ${data.name}</p>
+                        <p>Email: ${data.email}</p>
+                        <p>Phone: ${data.phone}</p>
+                        <p>Role: ${data.role}</p>
+                    `;
+
+                    if (data.role === 'panchayat') {
+                        profileHTML += `
+                            <p>District: ${data.district.name}</p>
+                            <p>BDO: ${data.bdo}</p>
+                        `;
+                    } else if (data.role === 'bdo') {
+                        profileHTML += `<p>District: ${data.district.name}</p>`;
+                    } else if (data.role === 'dc') {
+                        profileHTML += `<p>District: ${data.district.collectorName}</p>`;
+                    }
+
+                    profileInfoElement.innerHTML = profileHTML;
+                } else if (response.status === 401) {
+                    alert('Unauthorized access. Please log in again.');
+                    window.location.href = 'loginform.html';
+                } else {
+                    alert('Failed to retrieve user profile.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while fetching the profile.');
+            }
+        });
+    </script>
+</body>
+</html>  -->
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>User Profile</h1>
+        </div>
+    </header>
+    <section class="user-details">
+        <div class="container">
+            <h2>User Information</h2>
+            <div id="profileInfo"></div>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const token = sessionStorage.getItem('token');
+
+                if (!token) {
+                    alert('Please log in first.');
+                    window.location.href = 'loginform.html';
+                    return;
+                }
+
+                const response = await fetch('http://localhost:3000/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const profileInfoElement = document.getElementById('profileInfo');
+                    profileInfoElement.innerHTML = `
+                        <p>Name: ${data.name}</p>
+                        <p>Email: ${data.email}</p>
+                        <p>Phone: ${data.phone}</p>
+                        <p>Role: ${data.role}</p>
+                        <p>District: ${data.district}</p>
+                    `;
+                } else if (response.status === 401) {
+                    alert('Unauthorized access. Please log in again.');
+                    window.location.href = 'loginform.html';
+                } else {
+                    alert('Failed to retrieve user profile.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while fetching the profile.');
+            }
+        });
+    </script>
+</body>
+</html> -->

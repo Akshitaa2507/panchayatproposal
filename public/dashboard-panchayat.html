@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panchayat Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Panchayat Dashboard</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="dashboard-panchayat.html">Dashboard</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#" id="logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="dashboard">
+        <div class="container">
+            <h2>Welcome, Panchayat Member</h2>
+            <p>Here are your tasks and proposals:</p>
+            <ul>
+                <li><a href="submission-form.html">Submit New Proposal</a></li>
+                <li><a href="view-proposals.html" id="viewProposalsLink">View Submitted Proposals & Track Their Status</a></li>
+                <li><a href="view-requests.html" id="viewRequestsLink">View Citizen Requests & Review Them</a></li>
+            </ul>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="logout.js"></script>
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panchayat Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Panchayat Dashboard</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="dashboard-panchayat.html">Dashboard</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#" id="logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="dashboard">
+        <div class="container">
+            <h2>Welcome, Panchayat Member</h2>
+            <p>Here are your tasks and proposals:</p>
+            <ul>
+                <li><a href="submission-form.html">Submit New Proposal</a></li>
+                <li><a href="view-proposals.html" id="viewProposalsLink">View Submitted Proposals & track their status</a></li>
+            </ul>
+            <div id="proposalsContainer" style="display:none;">
+                <h3>Submitted Proposals</h3>
+                <ul id="proposalsList"></ul>
+            </div>
+            <div id="statusContainer" style="display:none;">
+                <h3>Track Proposal Status</h3>
+                <ul id="statusList"></ul>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="logout.js"></script> -->
+
+
+
+    <!-- <script>
+        document.getElementById('logout').addEventListener('click', function(event) {
+            event.preventDefault();
+            fetch('/logout', {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Logout failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        document.getElementById('viewProposalsLink').addEventListener('click', function(event) {
+            event.preventDefault();
+            fetch('/api/proposals?status=submitted', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then(response => response.json())
+            .then(proposals => {
+                const proposalsList = document.getElementById('proposalsList');
+                proposalsList.innerHTML = '';
+                proposals.forEach(proposal => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = proposal.requestDescription;
+                    proposalsList.appendChild(listItem);
+                });
+                document.getElementById('proposalsContainer').style.display = 'block';
+                document.getElementById('statusContainer').style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        document.getElementById('trackStatusLink').addEventListener('click', function(event) {
+            event.preventDefault();
+            fetch('/api/proposals?status=under_review_bdo', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then(response => response.json())
+            .then(proposals => {
+                const statusList = document.getElementById('statusList');
+                statusList.innerHTML = '';
+                proposals.forEach(proposal => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${proposal.requestDescription} - Status: ${proposal.status}`;
+                    statusList.appendChild(listItem);
+                });
+                document.getElementById('proposalsContainer').style.display = 'none';
+                document.getElementById('statusContainer').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script> -->
+</body>
+</html>
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panchayat Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Panchayat Dashboard</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#">Dashboard</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#" id="logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="dashboard">
+        <div class="container">
+            <h2>Welcome, Panchayat Member</h2>
+            <p>Here are your tasks and proposals:</p>
+            <ul>
+                <li><a href="submission-form.html">Submit New Proposal</a></li>
+                <li><a href="view-proposals.html">View Submitted Proposals</a></li>
+                <li><a href="track-status.html">Track Proposal Status</a></li>
+            </ul>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('logout').addEventListener('click', function(event) {
+            event.preventDefault();
+            // Assuming you have a backend endpoint to handle logout
+            fetch('/logout', {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Logout failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        // Fetch proposals to display in the dashboard (if necessary)
+        fetch('/api/proposals?status=submitted', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        .then(response => response.json())
+        .then(proposals => {
+            const proposalList = document.querySelector('.dashboard ul');
+            proposals.forEach(proposal => {
+                const listItem = document.createElement('li');
+                listItem.textContent = proposal.requestDescription;
+                proposalList.appendChild(listItem);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    </script>
+</body>
+</html> -->
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panchayat Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Panchayat Dashboard</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#">Dashboard</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="dashboard">
+        <div class="container">
+            <h2>Welcome, Panchayat Member</h2>
+            <p>Here are your tasks and proposals:</p>
+            <ul>
+                <li><a href="submission-form.html">Submit New Proposal</a></li>
+                <li><a href="#">View Submitted Proposals</a></li>
+                <li><a href="#">Track Proposal Status</a></li>
+            </ul>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
+ -->

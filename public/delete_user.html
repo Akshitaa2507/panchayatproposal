@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete User</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        #dashboardButton {
+           background-color: #e74c3c;
+           color: white;
+           border: none;
+           padding: 10px 20px;
+           border-radius: 4px;
+           font-size: 16px;
+           cursor: pointer;
+           transition: background-color 0.3s;
+       }
+
+       #dashboardButton:hover {
+           background-color: #c0392b;
+       }
+   </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Delete User</h1>
+            <nav>
+                
+                <button id="dashboardButton" class="dashboard-btn" onclick="goToDashboard()">Dashboard</button>
+            </nav>
+        </div>
+    </header>
+    <section class="delete-user">
+        <div class="container">
+            <form id="deleteUserForm">
+                <label for="userID">User ID:</label>
+                <input type="text" id="userID" name="userID" required>
+                <p></p>
+                <button type="submit">Delete User</button>
+            </form>
+        </div>
+    </section>
+    <script>
+        document.getElementById('deleteUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userID = document.getElementById('userID').value;
+
+            const token = sessionStorage.getItem('jwtToken');
+
+            try {
+                const response = await fetch('http://localhost:3000/admin/delete_user', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ userID })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('User deleted successfully');
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+        function goToDashboard() {
+            window.location.href = 'admin_dashboard.html'; // Change this to your actual dashboard URL
+        }
+    </script>
+</body>
+</html>

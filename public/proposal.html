@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Proposals</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: #2c3e50;
+            color: #fff;
+            padding: 10px 0;
+        }
+
+        header h1 {
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        header nav ul li {
+            margin: 0 10px;
+        }
+
+        header nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        header nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        section.proposal {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        section.proposal form {
+            margin-bottom: 20px;
+        }
+
+        section.proposal form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        section.proposal form input,
+        section.proposal form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        section.proposal form input[type="file"] {
+            padding: 5px;
+        }
+
+        section.proposal form button {
+            padding: 10px 20px;
+            background: #225c83;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        section.proposal form button:hover {
+            background: #133c57;
+        }
+
+        h2 {
+            text-align: center;
+            color: #176fa9;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table thead {
+            background: #0c4e7a;
+            color: #fff;
+        }
+
+        table thead th {
+            padding: 15px;
+            text-align: left;
+            font-size: 18px;
+        }
+
+        table tbody tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        table tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        table tbody tr:hover {
+            background: #f1f1f1;
+        }
+
+        table tbody td {
+            padding: 15px;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Citizen Proposals</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="#" id="logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="proposal">
+        <div class="container">
+            <form id="proposalForm">
+                <label for="ctitle">Title:</label>
+                <input type="text" id="ctitle" name="ctitle" required>
+                
+                <label for="cdescription">Description:</label>
+                <textarea id="cdescription" name="cdescription" required></textarea>
+
+                <label for="cattachment">Attachment:</label>
+                <input type="file" id="cattachment" name="cattachment" required>
+                
+                <button type="submit">Create Proposal</button>
+            </form>
+            <h2>Your Proposals</h2>
+            <table id="proposalTable">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Panchayat Comments</th>
+                        <th>Panchayat Attachment</th>
+                        <th>My Attachment</th>
+                    </tr>
+                </thead>
+                <tbody id="proposalTableBody">
+                    <!-- Proposal rows will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+    
+    <script>
+        async function fetchProposals() {
+            const token = sessionStorage.getItem('token');
+            if (!token) {
+                alert('You are not logged in');
+                window.location.href = 'citizen_login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/cgetProposals', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch proposals: ${response.statusText}`);
+                }
+
+                const proposals = await response.json();
+                const proposalTableBody = document.getElementById('proposalTableBody');
+                proposalTableBody.innerHTML = ''; // Clear any existing rows
+
+                proposals.forEach(proposal => {
+                    const row = document.createElement('tr');
+
+                    const titleCell = document.createElement('td');
+                    titleCell.textContent = proposal.ctitle;
+                    row.appendChild(titleCell);
+
+                    const descriptionCell = document.createElement('td');
+                    descriptionCell.textContent = proposal.cdescription;
+                    row.appendChild(descriptionCell);
+
+                    const statusCell = document.createElement('td');
+                    statusCell.textContent = proposal.cstatus;
+                    row.appendChild(statusCell);
+
+                    const pcommentsCell = document.createElement('td');
+                    pcommentsCell.textContent = proposal.pcomments || 'No Comments';
+                    row.appendChild(pcommentsCell);
+
+                    const pattachmentCell = document.createElement('td');
+                    if (proposal.pattachment) {
+                        const pattachmentLink = document.createElement('a');
+                        pattachmentLink.href = `http://localhost:3000/${proposal.pattachment}`;
+                        pattachmentLink.textContent = 'View Attachment';
+                        pattachmentLink.target = '_blank';
+                        pattachmentCell.appendChild(pattachmentLink);
+                    } else {
+                        pattachmentCell.textContent = 'No Attachment';
+                    }
+                    row.appendChild(pattachmentCell);
+
+                    const attachmentCell = document.createElement('td');
+                    if (proposal.cattachment) {
+                        const attachmentLink = document.createElement('a');
+                        attachmentLink.href = `http://localhost:3000/${proposal.cattachment}`;
+                        attachmentLink.textContent = 'View Attachment';
+                        attachmentLink.target = '_blank';
+                        attachmentCell.appendChild(attachmentLink);
+                    } else {
+                        attachmentCell.textContent = 'No Attachment';
+                    }
+                    row.appendChild(attachmentCell);
+
+                    proposalTableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching proposals:', error);
+                alert(`An error occurred while fetching proposals: ${error.message}`);
+            }
+        }
+
+        document.getElementById('proposalForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const token = sessionStorage.getItem('token');
+            if (!token) {
+                alert('You are not logged in');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const ctitle = document.getElementById('ctitle').value;
+            const cdescription = document.getElementById('cdescription').value;
+            const cattachment = document.getElementById('cattachment').files[0];
+
+            const formData = new FormData();
+            formData.append('ctitle', ctitle);
+            formData.append('cdescription', cdescription);
+            formData.append('cattachment', cattachment);
+
+            try {
+                const response = await fetch('http://localhost:3000/api/ccreateProposal', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to create proposal');
+                }
+
+                alert('Proposal created successfully');
+                fetchProposals(); // Refresh the list of proposals
+            } catch (error) {
+                console.error('Error creating proposal:', error);
+                alert('An error occurred while creating the proposal');
+            }
+        });
+
+        // Fetch proposals on page load
+        document.addEventListener('DOMContentLoaded', fetchProposals);
+    </script>
+    <script src="logout.js"></script>
+</body>
+</html>

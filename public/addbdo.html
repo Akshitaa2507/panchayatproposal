@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage BDO</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Manage BDO</h1>
+            <nav>
+                <ul>
+                    <li><a href="dashboard-dc.html">Dashboard</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#" id="logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="manage-bdo">
+        <div class="container">
+            <h2>Add BDO</h2>
+            <form id="addBdoForm">
+                <div>
+                    <label for="userID">UserID:</label>
+                    <input type="text" id="userID" name="userID" required>
+                </div>
+                <div>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="phone">Phone:</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <button type="submit" class="btn">Add BDO</button>
+            </form>
+
+            <h2>Modify BDO</h2>
+            <form id="modifyBdoForm">
+                <div>
+                    <label for="modifyUserID">UserID:</label>
+                    <input type="text" id="modifyUserID" name="userID" required>
+                </div>
+                <div>
+                    <label for="modifyName">New Name:</label>
+                    <input type="text" id="modifyName" name="name">
+                </div>
+                <div>
+                    <label for="modifyEmail">New Email:</label>
+                    <input type="email" id="modifyEmail" name="email">
+                </div>
+                <div>
+                    <label for="modifyPhone">New Phone:</label>
+                    <input type="tel" id="modifyPhone" name="phone">
+                </div>
+                <button type="submit" class="btn">Modify BDO</button>
+            </form>
+
+            <h2>Remove BDO</h2>
+            <form id="removeBdoForm">
+                <div>
+                    <label for="removeUserID">UserID:</label>
+                    <input type="text" id="removeUserID" name="userID" required>
+                </div>
+                <button type="submit" class="btn">Remove BDO</button>
+            </form>
+        </div>
+    </section>
+    
+    
+    
+    <script>
+        $(document).ready(function() {
+            const token = sessionStorage.getItem('token');
+
+            if (!token) {
+                alert('You are not logged in.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            $('#addBdoForm').on('submit', function(event) {
+                event.preventDefault();
+
+                const formData = {
+                    userID: $('#userID').val(),
+                    name: $('#name').val(),
+                    email: $('#email').val(),
+                    phone: $('#phone').val(),
+                };
+
+                $.ajax({
+                    url: 'http://localhost:3000/api/dc/add-bdo',
+                    type: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        alert('BDO added successfully!');
+                        window.location.href = 'dashboard-dc.html';
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error adding BDO:', textStatus, errorThrown);
+                        alert('Error adding BDO: ' + textStatus);
+                    }
+                });    });
+
+            $('#modifyBdoForm').on('submit', function(event) {
+                event.preventDefault();
+
+                const formData = {
+                    userID: $('#modifyUserID').val(),
+                    name: $('#modifyName').val(),
+                    email: $('#modifyEmail').val(),
+                    phone: $('#modifyPhone').val(),
+                };
+
+                $.ajax({
+                    url: 'http://localhost:3000/api/dc/modify-bdo',
+                    type: 'PUT',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        alert('BDO modified successfully!');
+                        window.location.href = 'dashboard-dc.html';
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error modifying BDO:', textStatus, errorThrown);
+                        alert('Error modifying BDO: ' + textStatus);
+                    }
+                });
+            });
+
+            $('#removeBdoForm').on('submit', function(event) {
+                event.preventDefault();
+
+                const formData = {
+                    userID: $('#removeUserID').val()
+                };
+
+                $.ajax({
+                    url: 'http://localhost:3000/api/dc/remove-bdo',
+                    type: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        alert('BDO removed successfully!');
+                        window.location.href = 'dashboard-dc.html';
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error removing BDO:', textStatus, errorThrown);
+                        alert('Error removing BDO: ' + textStatus);
+                    }
+                });
+            });
+        });
+    </script>
+      <script src="logout.js"></script>
+</body>
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add BDO</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Add BDO</h1>
+            <nav>
+                <ul>
+                    <li><a href="dashboard-dc.html">Dashboard</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="add-bdo">
+        <div class="container">
+            <h2>Enter BDO Details</h2>
+            <form id="addBdoForm">
+                <div>
+                    <label for="userID">UserID:</label>
+                    <input type="text" id="userID" name="userID" required>
+                </div>
+                <div>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="phone">Phone:</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                
+                <button type="submit" class="btn">Add BDO</button>
+            </form>
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        $(document).ready(function() {
+            const token = sessionStorage.getItem('token');
+
+            if (!token) {
+                alert('You are not logged in.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            $('#addBdoForm').on('submit', function(event) {
+                event.preventDefault();
+
+                const formData = {
+                    userID: $('#userID').val(),
+                    name: $('#name').val(),
+                    email: $('#email').val(),
+                    phone: $('#phone').val(),
+                };
+
+                $.ajax({
+                    url: 'http://localhost:3000/api/dc/add-bdo',
+                    type: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        alert('BDO added successfully!');
+                        window.location.href = 'dashboard-dc.html';
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error adding BDO:', textStatus, errorThrown);
+                        alert('Error adding BDO: ' + textStatus);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> -->

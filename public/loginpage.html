@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panchayat Proposal Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Panchayat Proposal Management System</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="index.html">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="hero">
+        <div class="container">
+            <h2>Welcome to the Panchayat Proposal Management System</h2>
+            <p>Streamlining the process of submitting and approving panchayat proposals.</p>
+        </div>
+    </section>
+    <section class="login-options">
+        <div class="container">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <label for="userID">User ID:</label>
+                <input type="text" id="userID" name="userID" required>
+                <button type="submit">Send OTP</button>
+            </form>
+            <form id="otpForm" style="display:none;">
+                <label for="otp">OTP:</label>
+                <input type="text" id="otp" name="otp" required>
+                <button type="submit">Verify OTP</button>
+            </form>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const userID = document.getElementById('userID').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/send-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userID })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('OTP sent to your registered mobile number');
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('otpForm').style.display = 'block';
+                } else {
+                    alert(data.message || 'Failed to send OTP');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while sending OTP');
+            }
+        });
+
+        document.getElementById('otpForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const userID = document.getElementById('userID').value;
+            const otp = document.getElementById('otp').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/verify-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userID, otp })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    sessionStorage.setItem('token', data.token);
+                    window.location.href = data.redirectUrl;
+                } else {
+                    alert(data.message || 'OTP verification failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while verifying OTP');
+            }
+        });
+    </script>
+</body>
+</html>
+
+

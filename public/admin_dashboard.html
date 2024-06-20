@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* General Styles */
+        #logoutButton {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #logoutButton:hover {
+            background-color: #c0392b;
+        }
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+/* Header Styles */
+
+
+/* Admin Options Styles */
+.admin-options h2 {
+    color: #0779e4;
+}
+
+.admin-options ul {
+    list-style: none;
+    padding: 0;
+}
+
+.admin-options li {
+    background: #fff;
+    margin: 10px 0;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-options a {
+    text-decoration: none;
+    color: #333;
+    font-size: 18px;
+    display: block;
+}
+
+.admin-options a:hover {
+    color: #0779e4;
+}
+
+/* Footer Styles */
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Admin Dashboard</h1>
+            <nav>
+                <button id="logoutButton">Logout</button> 
+            </nav>
+        </div>
+    </header>
+    <section class="admin-options">
+        <div class="container">
+            <h2>Manage Users</h2>
+            <!-- Admin options to create, modify, and delete users -->
+            <ul>
+                <li><a href="create_user.html">Create User</a></li>
+                <li><a href="modify_user.html">Modify User</a></li>
+                <li><a href="delete_user.html">Delete User</a></li>
+            </ul>
+        </div>
+    </section>
+    <script>
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            // Remove token from localStorage or sessionStorage
+            sessionStorage.removeItem('token');
+            // Redirect to login page
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

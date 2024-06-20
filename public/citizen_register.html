@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Registration</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Citizen Registration</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="index.html">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="registration">
+        <div class="container">
+            <form id="citizenRegisterForm">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" required>
+                
+                <label for="phone">Phone:</label>
+                <input type="text" id="phone" name="phone" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                
+                <label for="district">District:</label>
+                <select id="district" name="district" required>
+                    <option value="">Select District</option>
+                    <!-- Options will be populated dynamically -->
+                </select>
+                
+                <label for="bdo">BDO:</label>
+                <select id="bdo" name="bdo" required>
+                    <option value="">Select BDO</option>
+                    <!-- Options will be populated dynamically -->
+                </select>
+                
+                <label for="panchayat">Panchayat:</label>
+                <select id="panchayat" name="panchayat" required>
+                    <option value="">Select Panchayat</option>
+                    <!-- Options will be populated dynamically -->
+                </select>
+                
+                <button type="submit">Register</button>
+            </form>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Panchayat Proposal Management System. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+        // Fetch and populate district, BDO, and Panchayat options
+        async function populateOptions() {
+            const districtSelect = document.getElementById('district');
+            const bdoSelect = document.getElementById('bdo');
+            const panchayatSelect = document.getElementById('panchayat');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/getDistricts');
+                const districts = await response.json();
+                
+                districts.forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district._id;
+                    option.textContent = district.name; // Change to userID
+                    districtSelect.appendChild(option);
+                });
+
+                districtSelect.addEventListener('change', async () => {
+                    const districtID = districtSelect.value;
+                    bdoSelect.innerHTML = '<option value="">Select BDO</option>';
+                    panchayatSelect.innerHTML = '<option value="">Select Panchayat</option>';
+
+                    const bdoResponse = await fetch(`http://localhost:3000/api/getBdos?districtID=${districtID}`);
+                    const bdos = await bdoResponse.json();
+
+                    bdos.forEach(bdo => {
+                        const option = document.createElement('option');
+                        option.value = bdo._id;
+                        option.textContent = bdo.name; // Change to userID
+                        bdoSelect.appendChild(option);
+                    });
+
+                    bdoSelect.addEventListener('change', async () => {
+                        const bdoID = bdoSelect.value;
+                        panchayatSelect.innerHTML = '<option value="">Select Panchayat</option>';
+
+                        const panchayatResponse = await fetch(`http://localhost:3000/api/getPanchayats?bdoID=${bdoID}`);
+                        const panchayats = await panchayatResponse.json();
+
+                        panchayats.forEach(panchayat => {
+                            const option = document.createElement('option');
+                            option.value = panchayat._id;
+                            option.textContent = panchayat.userID; // Change to userID
+                            panchayatSelect.appendChild(option);
+                        });
+                    });
+                });
+            } catch (error) {
+                console.error('Error fetching options:', error);
+            }
+        }
+
+        populateOptions();
+
+        // Handle form submission
+        document.getElementById('citizenRegisterForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const district = document.getElementById('district').value;
+            const bdo = document.getElementById('bdo').value;
+            const panchayat = document.getElementById('panchayat').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/registerCitizen', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, address, phone, email, password, district, bdo, panchayat })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Registration successful');
+                    window.location.href = 'index.html';
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
